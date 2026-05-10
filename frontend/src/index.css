@@ -1,0 +1,79 @@
+@import 'tailwindcss';
+
+:root {
+  --bg: #020617;
+  --card: rgba(15, 23, 42, 0.72);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Segoe UI', 'Inter', sans-serif;
+  background-color: var(--bg);
+  color: #e2e8f0;
+}
+
+.hero-bg {
+  background:
+    radial-gradient(circle at 15% 20%, rgba(56, 189, 248, 0.18), transparent 30%),
+    radial-gradient(circle at 80% 10%, rgba(129, 140, 248, 0.16), transparent 26%),
+    radial-gradient(circle at 40% 80%, rgba(59, 130, 246, 0.16), transparent 30%),
+    #020617;
+}
+
+.card {
+  border: 1px solid rgba(51, 65, 85, 0.8);
+  background: var(--card);
+  backdrop-filter: blur(8px);
+  border-radius: 1rem;
+}
+
+.input {
+  margin-top: 0.35rem;
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid #334155;
+  background: rgba(15, 23, 42, 0.95);
+  padding: 0.65rem 0.8rem;
+  color: #f8fafc;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.input:focus {
+  border-color: #22d3ee;
+}
+
+.btn-primary {
+  border: none;
+  border-radius: 0.75rem;
+  padding: 0.7rem 1.1rem;
+  color: #fff;
+  font-weight: 600;
+  background: linear-gradient(120deg, #2563eb, #7c3aed);
+  cursor: pointer;
+  transition: transform 0.18s ease, opacity 0.18s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  opacity: 0.95;
+}
+
+.btn-secondary {
+  border: 1px solid #334155;
+  border-radius: 0.75rem;
+  padding: 0.7rem 1.1rem;
+  color: #e2e8f0;
+  font-weight: 600;
+  background: rgba(15, 23, 42, 0.9);
+  transition: border-color 0.18s ease;
+}
+
+.btn-secondary:hover {
+  border-color: #22d3ee;
+}
