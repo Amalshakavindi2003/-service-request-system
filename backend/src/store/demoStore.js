@@ -143,7 +143,10 @@ const deleteRequestById = async (requestId) => {
   return state.requests.length !== before;
 };
 
-const verifyPassword = async (password, passwordHash) => password === 'Password@123';
+const verifyPassword = async (password, passwordHash) => {
+  if (!passwordHash) return false;
+  return bcrypt.compare(password, passwordHash);
+};
 
 module.exports = {
   findUserByEmail,
