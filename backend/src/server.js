@@ -1,25 +1,29 @@
-const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '..', '.env') });
 const app = require('./app');
 const pool = require('./config/db');
+const env = require('./config/env');
 const { isDemoMode } = require('./config/runtime');
-
-const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
   try {
     if (!isDemoMode() && pool) {
-      await pool.query('SELECT NOW()');
-      console.log('Database connection successful');
-    } else {
+      try {
+        await pool.query('SELECT NOW()');
+        console.log('Database connection successful');
+      } catch (error) {
+        console.warn('Database connection failed, falling back to demo mode:', error.message);
+        env.demoMode = true;
+      }
+    }
+
+    if (isDemoMode()) {
       console.log('Demo mode enabled - using in-memory auth/data');
     }
 
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
+    app.listen(env.port, () => {
+      console.log(`Server running on port ${env.port}`);
     });
   } catch (error) {
-    console.error('Failed to connect to database:', error.message);
+    console.error('Failed to start server:', error.message);
     process.exit(1);
   }
 };

@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const env = require('./config/env');
 const authRoutes = require('./routes/authRoutes');
 const requestRoutes = require('./routes/requestRoutes');
 const adminRoutes = require('./routes/adminRoutes');
@@ -10,7 +11,8 @@ const app = express();
 
 app.use(
   cors({
-    origin: true,
+    origin: env.clientUrl,
+    credentials: true,
   })
 );
 app.use(express.json());
