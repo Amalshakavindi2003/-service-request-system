@@ -74,7 +74,7 @@ function AnalyticsPage() {
                 <div key={category} className="flex justify-between items-center pb-2 border-b border-slate-600">
                   <span className="text-slate-300">{category}</span>
                   <div className="flex items-center gap-2">
-                    <div className="h-2 bg-cyan-500 rounded" style={{width: \`\${count * 20}px\`}}></div>
+                    <div className="h-2 bg-cyan-500 rounded" style={{width: (count * 20) + 'px'}}></div>
                     <span className="text-slate-400">{count}</span>
                   </div>
                 </div>
@@ -91,7 +91,7 @@ function AnalyticsPage() {
                   <div key={priority} className="flex justify-between items-center pb-2 border-b border-slate-600">
                     <span className="text-slate-300">{priority}</span>
                     <div className="flex items-center gap-2">
-                      <div className={`h-2 ${colors[priority] || 'bg-slate-500'} rounded`} style={{width: \`\${count * 20}px\`}}></div>
+                      <div className={`h-2 ${colors[priority] || 'bg-slate-500'} rounded`} style={{width: (count * 20) + 'px'}}></div>
                       <span className="text-slate-400">{count}</span>
                     </div>
                   </div>
@@ -106,7 +106,7 @@ function AnalyticsPage() {
           <div className="flex justify-around items-end h-64">
             {stats.map((stat, i) => (
               <div key={i} className="flex flex-col items-center gap-2">
-                <div className={`${stat.color} rounded w-12 transition-all hover:scale-105`} style={{height: \`\${(stat.value / (analytics?.total || 1)) * 200}px\`}}></div>
+                <div className={`${stat.color} rounded w-12 transition-all hover:scale-105`} style={{height: ((stat.value / (analytics?.total || 1)) * 200) + 'px'}}></div>
                 <span className="text-sm text-slate-300">{stat.label}</span>
                 <span className="text-lg font-bold text-white">{stat.value}</span>
               </div>

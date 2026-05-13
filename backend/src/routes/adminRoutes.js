@@ -1,9 +1,10 @@
 const express = require('express');
 const { body, param } = require('express-validator');
 const {
-  getRequestsForAdmin,
-  changeRequestStatus,
-  removeRequest,
+  getAllServiceRequests,
+  updateStatus,
+  deleteRequest,
+  getSystemAnalytics,
 } = require('../controllers/requestController');
 const { authenticateToken } = require('../middleware/authMiddleware');
 const { authorizeAdmin } = require('../middleware/adminMiddleware');
@@ -11,29 +12,30 @@ const { validateRequest } = require('../middleware/validateRequest');
 
 const router = express.Router();
 
-router.get('/requests', authenticateToken, authorizeAdmin, getRequestsForAdmin);
+router.get('/requests', authenticateToken, authorizeAdmin, getAllServiceRequests);
+router.get('/analytics', authenticateToken, authorizeAdmin, getSystemAnalytics);
 
 router.patch(
-  '/requests/:id/status',
+  '/requests/:requestId/status',
   authenticateToken,
   authorizeAdmin,
   [
-    param('id').isInt().withMessage('Request ID must be a number'),
+    param('requestId').isInt().withMessage('Request ID must be a number'),
     body('status')
       .isIn(['Pending', 'In Progress', 'Completed'])
       .withMessage('Status must be Pending, In Progress, or Completed'),
   ],
   validateRequest,
-  changeRequestStatus
+  updateStatus
 );
 
 router.delete(
-  '/requests/:id',
+  '/requests/:requestId',
   authenticateToken,
   authorizeAdmin,
-  [param('id').isInt().withMessage('Request ID must be a number')],
+  [param('requestId').isInt().withMessage('Request ID must be a number')],
   validateRequest,
-  removeRequest
+  deleteRequest
 );
 
 module.exports = router;
