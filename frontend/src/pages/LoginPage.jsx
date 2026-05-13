@@ -7,7 +7,7 @@ function LoginPage() {
   const navigate = useNavigate()
   const location = useLocation()
   const { login } = useAuth()
-  const [form, setForm] = useState({ email: 'alice@demo.com', password: 'Password@123' })
+  const [form, setForm] = useState({ email: 'john@company.com', password: 'Password@123' })
   const [loading, setLoading] = useState(false)
 
   const from = location.state?.from?.pathname
@@ -37,7 +37,7 @@ function LoginPage() {
         <p className="mt-1 text-sm text-slate-300">Access your dashboard to manage requests.</p>
 
         <div className="mt-4 rounded-xl border border-cyan-400/30 bg-cyan-400/10 p-3 text-sm text-cyan-100">
-          Demo login: alice@demo.com / Password@123
+          Demo: john@company.com / Password@123 | Or admin@company.com for admin
         </div>
 
         <label className="mt-6 block text-sm text-slate-300">Email</label>

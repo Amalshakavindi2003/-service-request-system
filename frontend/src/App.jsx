@@ -1,50 +1,37 @@
-import { Routes, Route } from 'react-router-dom'
-import ProtectedRoute from './routes/ProtectedRoute'
-import AppLayout from './components/layout/AppLayout'
-import LandingPage from './pages/LandingPage'
+import { Routes, Route, Navigate } from 'react-router-dom'
+import { useAuth } from './context/AuthContext'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
-import UserDashboardPage from './pages/UserDashboardPage'
+import DashboardPage from './pages/DashboardPage'
 import CreateRequestPage from './pages/CreateRequestPage'
 import RequestHistoryPage from './pages/RequestHistoryPage'
-import AdminDashboardPage from './pages/AdminDashboardPage'
 import ProfilePage from './pages/ProfilePage'
-import NotFoundPage from './pages/NotFoundPage'
+import RequestDetailPage from './pages/RequestDetailPage'
+import AdminDashboard from './pages/AdminDashboard'
+import AnalyticsPage from './pages/AnalyticsPage'
+import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
+  const { token } = useAuth()
+
   return (
     <Routes>
-      <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
-
-      <Route
-        path="/dashboard"
-        element={
-          <ProtectedRoute>
-            <AppLayout />
-          </ProtectedRoute>
-        }
-      >
-        <Route index element={<UserDashboardPage />} />
-        <Route path="create-request" element={<CreateRequestPage />} />
-        <Route path="request-history" element={<RequestHistoryPage />} />
-        <Route path="profile" element={<ProfilePage />} />
+      
+      <Route element={<ProtectedRoute />}>
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/dashboard/create-request" element={<CreateRequestPage />} />
+        <Route path="/dashboard/request-history" element={<RequestHistoryPage />} />
+        <Route path="/dashboard/profile" element={<ProfilePage />} />
+        <Route path="/request/:requestId" element={<RequestDetailPage />} />
+        
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/admin/requests" element={<AdminDashboard />} />
+        <Route path="/analytics" element={<AnalyticsPage />} />
       </Route>
-
-      <Route
-        path="/admin"
-        element={
-          <ProtectedRoute requireAdmin>
-            <AppLayout />
-          </ProtectedRoute>
-        }
-      >
-        <Route index element={<AdminDashboardPage />} />
-        <Route path="profile" element={<ProfilePage />} />
-      </Route>
-
-      <Route path="*" element={<NotFoundPage />} />
+      
+      <Route path="/" element={<Navigate to="/dashboard" />} />
     </Routes>
   )
 }

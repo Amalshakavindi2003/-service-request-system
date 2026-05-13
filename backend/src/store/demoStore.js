@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 
-const PASSWORD_HASH = '$2b$10$QK3Fnyo8R0Yx1mQZ3qvLMeaqA8Qx9JR6mYxWRU2uCA6Q22mHZVD2.';
+const PASSWORD_HASH = '$2b$10$ZnAyryyFeIBfvxCkZg1YUOzAzJZxczCCfHmp/mTR0upLS.e3xMw0u';
 
 const state = {
   users: [
@@ -36,8 +36,18 @@ const state = {
       category: 'IT Support',
       priority: 'High',
       status: 'Pending',
+      assigned_to: null,
       created_at: new Date('2026-05-10T00:00:00.000Z').toISOString(),
       updated_at: new Date('2026-05-10T00:00:00.000Z').toISOString(),
+    },
+  ],
+  comments: [
+    {
+      id: 1,
+      request_id: 1,
+      user_id: 1,
+      text: 'We are reviewing this issue now.',
+      created_at: new Date('2026-05-10T01:00:00.000Z').toISOString(),
     },
   ],
 };
@@ -98,6 +108,7 @@ const createRequest = async ({ userId, title, description, category, priority })
     category,
     priority,
     status: 'Pending',
+    assigned_to: null,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   };
@@ -107,15 +118,15 @@ const createRequest = async ({ userId, title, description, category, priority })
 
 const getRequestsByUserId = async (userId) => state.requests.filter((request) => Number(request.user_id) === Number(userId));
 
-const getAllRequests = async ({ search = '', status = '' }) => {
+const getAllRequests = async ({ search = '', status = '', category = '', priority = '' }) => {
   const searchTerm = search.trim().toLowerCase();
   return state.requests
     .map((request) => {
       const user = findUserById(request.user_id);
       return {
         ...request,
-        full_name: user?.full_name,
-        email: user?.email,
+        full_name: user ? user.full_name : '',
+        email: user ? user.email : '',
       };
     })
     .filter((request) => {
@@ -123,16 +134,21 @@ const getAllRequests = async ({ search = '', status = '' }) => {
         !searchTerm ||
         request.title.toLowerCase().includes(searchTerm) ||
         request.description.toLowerCase().includes(searchTerm) ||
-        request.full_name?.toLowerCase().includes(searchTerm);
+        String(request.full_name).toLowerCase().includes(searchTerm);
       const matchesStatus = !status || request.status === status;
-      return matchesSearch && matchesStatus;
+      const matchesCategory = !category || request.category === category;
+      const matchesPriority = !priority || request.priority === priority;
+      return matchesSearch && matchesStatus && matchesCategory && matchesPriority;
     });
 };
 
-const updateRequestStatus = async ({ requestId, status }) => {
+const updateRequestStatus = async ({ requestId, status, assignedTo }) => {
   const request = state.requests.find((item) => Number(item.id) === Number(requestId));
   if (!request) return null;
   request.status = status;
+  if (typeof assignedTo !== 'undefined') {
+    request.assigned_to = assignedTo;
+  }
   request.updated_at = new Date().toISOString();
   return request;
 };
@@ -140,7 +156,49 @@ const updateRequestStatus = async ({ requestId, status }) => {
 const deleteRequestById = async (requestId) => {
   const before = state.requests.length;
   state.requests = state.requests.filter((item) => Number(item.id) !== Number(requestId));
+  state.comments = state.comments.filter((item) => Number(item.request_id) !== Number(requestId));
   return state.requests.length !== before;
+};
+
+const addComment = async ({ requestId, userId, text }) => {
+  const comment = {
+    id: nextId(state.comments),
+    request_id: Number(requestId),
+    user_id: Number(userId),
+    text,
+    created_at: new Date().toISOString(),
+  };
+  state.comments.push(comment);
+  return comment;
+};
+
+const getCommentsByRequestId = async (requestId) =>
+  state.comments
+    .filter((comment) => Number(comment.request_id) === Number(requestId))
+    .map((comment) => {
+      const user = findUserById(comment.user_id);
+      return {
+        ...comment,
+        full_name: user ? user.full_name : '',
+        email: user ? user.email : '',
+      };
+    });
+
+const getAnalytics = async () => {
+  const total = state.requests.length;
+  const pending = state.requests.filter((r) => r.status === 'Pending').length;
+  const inProgress = state.requests.filter((r) => r.status === 'In Progress').length;
+  const completed = state.requests.filter((r) => r.status === 'Completed').length;
+
+  const byCategory = {};
+  const byPriority = {};
+
+  state.requests.forEach((request) => {
+    byCategory[request.category] = (byCategory[request.category] || 0) + 1;
+    byPriority[request.priority] = (byPriority[request.priority] || 0) + 1;
+  });
+
+  return { total, pending, inProgress, completed, byCategory, byPriority };
 };
 
 const verifyPassword = async (password, passwordHash) => {
@@ -158,5 +216,8 @@ module.exports = {
   getAllRequests,
   updateRequestStatus,
   deleteRequestById,
+  addComment,
+  getCommentsByRequestId,
+  getAnalytics,
   verifyPassword,
 };
