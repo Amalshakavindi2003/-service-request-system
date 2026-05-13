@@ -9,12 +9,21 @@ const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 
-app.use(
-  cors({
-    origin: env.clientUrl,
-    credentials: true,
-  })
-);
+// CORS configuration - allow any localhost in development
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || origin.includes('localhost') || origin.includes('127.0.0.1')) {
+      callback(null, true);
+    } else if (process.env.NODE_ENV === 'production') {
+      callback(null, env.clientUrl === origin);
+    } else {
+      callback(null, true);
+    }
+  },
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.get('/api/health', (req, res) => {

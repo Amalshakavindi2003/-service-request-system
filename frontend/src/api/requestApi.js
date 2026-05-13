@@ -1,8 +1,10 @@
 import axiosClient from './axiosClient'
 
 export const createRequestApi = (payload) => axiosClient.post('/requests', payload)
-export const getMyRequestsApi = () => axiosClient.get('/requests/my')
-export const getAllRequestsApi = (params) => axiosClient.get('/admin/requests', { params })
-export const updateRequestStatusApi = (id, payload) =>
-  axiosClient.patch(`/admin/requests/${id}/status`, payload)
-export const deleteRequestApi = (id) => axiosClient.delete(`/admin/requests/${id}`)
+export const getMyRequestsApi = () => axiosClient.get('/requests/my-requests')
+export const getAllRequestsApi = (filters) => axiosClient.get('/requests/all', { params: filters })
+export const updateRequestStatusApi = (requestId, payload) => axiosClient.patch(`/requests/${requestId}/status`, payload)
+export const deleteRequestApi = (requestId) => axiosClient.delete(`/requests/${requestId}`)
+export const addCommentApi = (requestId, payload) => axiosClient.post(`/requests/${requestId}/comments`, payload)
+export const getCommentsApi = (requestId) => axiosClient.get(`/requests/${requestId}/comments`)
+export const getAnalyticsApi = () => axiosClient.get('/requests/admin/analytics')

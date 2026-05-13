@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 
-const PASSWORD_HASH = '$2b$10$QK3Fnyo8R0Yx1mQZ3qvLMeaqA8Qx9JR6mYxWRU2uCA6Q22mHZVD2.';
+const PASSWORD_HASH = '$2b$10$ZnAyryyFeIBfvxCkZg1YUOzAzJZxczCCfHmp/mTR0upLS.e3xMw0u';
 
 const state = {
   users: [
