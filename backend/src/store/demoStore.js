@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 
-const PASSWORD_HASH = '$2b$10$ZnAyryyFeIBfvxCkZg1YUOzAzJZxczCCfHmp/mTR0upLS.e3xMw0u';
+const PASSWORD_HASH = '$2b$10$rd54l/BhJgrZkNEARClI/uEupEIQ9M9o7YkJVbQbu/pVA81jeYd/G';
 
 const state = {
   users: [
@@ -118,6 +118,17 @@ const createRequest = async ({ userId, title, description, category, priority })
 
 const getRequestsByUserId = async (userId) => state.requests.filter((request) => Number(request.user_id) === Number(userId));
 
+const getRequestById = async (requestId) => {
+  const request = state.requests.find((item) => Number(item.id) === Number(requestId));
+  if (!request) return null;
+  const user = findUserById(request.user_id);
+  return {
+    ...request,
+    full_name: user ? user.full_name : '',
+    email: user ? user.email : '',
+  };
+};
+
 const getAllRequests = async ({ search = '', status = '', category = '', priority = '' }) => {
   const searchTerm = search.trim().toLowerCase();
   return state.requests
@@ -213,6 +224,7 @@ module.exports = {
   updateUserProfile,
   createRequest,
   getRequestsByUserId,
+  getRequestById,
   getAllRequests,
   updateRequestStatus,
   deleteRequestById,

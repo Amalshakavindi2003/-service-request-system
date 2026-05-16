@@ -2,6 +2,7 @@ import axiosClient from './axiosClient'
 
 export const createRequestApi = (payload) => axiosClient.post('/requests', payload)
 export const getMyRequestsApi = () => axiosClient.get('/requests/my-requests')
+export const getRequestByIdApi = (requestId) => axiosClient.get(`/requests/${requestId}`)
 export const getAllRequestsApi = (filters) => axiosClient.get('/requests/all', { params: filters })
 export const updateRequestStatusApi = (requestId, payload) => axiosClient.patch(`/requests/${requestId}/status`, payload)
 export const deleteRequestApi = (requestId) => axiosClient.delete(`/requests/${requestId}`)

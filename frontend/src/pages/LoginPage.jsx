@@ -12,6 +12,14 @@ function LoginPage() {
 
   const from = location.state?.from?.pathname
 
+  const fillUserDemo = () => {
+    setForm({ email: 'john@company.com', password: 'Password@123' })
+  }
+
+  const fillAdminDemo = () => {
+    setForm({ email: 'admin@company.com', password: 'Password@123' })
+  }
+
   const handleSubmit = async (event) => {
     event.preventDefault()
     setLoading(true)
@@ -21,7 +29,7 @@ function LoginPage() {
       if (from) {
         navigate(from, { replace: true })
       } else {
-        navigate(user.role === 'admin' ? '/admin' : '/dashboard', { replace: true })
+        navigate(user.role === 'admin' || user.role === 'staff' ? '/admin' : '/dashboard', { replace: true })
       }
     } catch (error) {
       toast.error(error.message)
@@ -37,7 +45,14 @@ function LoginPage() {
         <p className="mt-1 text-sm text-slate-300">Access your dashboard to manage requests.</p>
 
         <div className="mt-4 rounded-xl border border-cyan-400/30 bg-cyan-400/10 p-3 text-sm text-cyan-100">
-          Demo: john@company.com / Password@123 | Or admin@company.com for admin
+          Demo credentials:
+          <div className="mt-1">User: john@company.com / Password@123</div>
+          <div>Admin: admin@company.com / Password@123</div>
+        </div>
+
+        <div className="mt-4 grid gap-2 sm:grid-cols-2">
+          <button type="button" onClick={fillUserDemo} className="rounded border border-slate-600 px-3 py-2 text-sm text-slate-200 hover:bg-slate-700">Use User Demo</button>
+          <button type="button" onClick={fillAdminDemo} className="rounded border border-cyan-500/40 px-3 py-2 text-sm text-cyan-200 hover:bg-cyan-500/10">Use Admin Demo</button>
         </div>
 
         <label className="mt-6 block text-sm text-slate-300">Email</label>

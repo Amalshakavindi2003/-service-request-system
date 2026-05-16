@@ -1,5 +1,17 @@
-const { createRequest, getRequestsByUserId, updateRequestStatus, deleteRequestById, getAllRequests, addComment, getCommentsByRequestId, getAnalytics } = require('../models/requestModel');
+const {
+  createRequest,
+  getRequestsByUserId,
+  getRequestById,
+  updateRequestStatus,
+  deleteRequestById,
+  getAllRequests,
+  addComment,
+  getCommentsByRequestId,
+  getAnalytics,
+} = require('../models/requestModel');
 const { isDemoMode } = require('../config/runtime');
+
+const ALLOWED_STATUSES = new Set(['Pending', 'In Progress', 'Completed']);
 
 const createServiceRequest = async (req, res, next) => {
   try {
@@ -20,6 +32,27 @@ const getUserRequests = async (req, res, next) => {
   } catch (error) { return next(error); }
 };
 
+const getServiceRequestById = async (req, res, next) => {
+  try {
+    const { requestId } = req.params;
+    const currentUserId = req.user?.id;
+    const role = req.user?.role;
+    if (!currentUserId) return res.status(401).json({ message: 'Unauthorized' });
+
+    const request = await getRequestById(requestId);
+    if (!request) return res.status(404).json({ message: 'Request not found' });
+
+    const isPrivileged = role === 'admin' || role === 'staff';
+    const isOwner = Number(request.user_id) === Number(currentUserId);
+
+    if (!isPrivileged && !isOwner) {
+      return res.status(403).json({ message: 'Forbidden' });
+    }
+
+    return res.status(200).json({ request });
+  } catch (error) { return next(error); }
+};
+
 const getAllServiceRequests = async (req, res, next) => {
   try {
     const { search = '', status = '', category = '', priority = '' } = req.query;
@@ -36,7 +69,13 @@ const updateStatus = async (req, res, next) => {
     const { status, assignedTo } = req.body;
     const role = req.user?.role;
     if (role !== 'admin' && role !== 'staff') return res.status(403).json({ message: 'Forbidden' });
-    const request = await updateRequestStatus({ requestId, status, assignedTo });
+
+    if (!ALLOWED_STATUSES.has(status)) {
+      return res.status(400).json({ message: 'Invalid status value' });
+    }
+
+    const normalizedAssignee = typeof assignedTo === 'string' ? assignedTo.trim() : assignedTo;
+    const request = await updateRequestStatus({ requestId, status, assignedTo: normalizedAssignee });
     if (!request) return res.status(404).json({ message: 'Request not found' });
     return res.status(200).json({ message: 'Request updated', request });
   } catch (error) { return next(error); }
@@ -81,4 +120,14 @@ const getSystemAnalytics = async (req, res, next) => {
   } catch (error) { return next(error); }
 };
 
-module.exports = { createServiceRequest, getUserRequests, getAllServiceRequests, updateStatus, deleteRequest, addCommentToRequest, getRequestComments, getSystemAnalytics };
+module.exports = {
+  createServiceRequest,
+  getUserRequests,
+  getServiceRequestById,
+  getAllServiceRequests,
+  updateStatus,
+  deleteRequest,
+  addCommentToRequest,
+  getRequestComments,
+  getSystemAnalytics,
+};
