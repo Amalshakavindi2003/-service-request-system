@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import toast from 'react-hot-toast'
 import { getMyRequestsApi } from '../api/requestApi'
 import Spinner from '../components/common/Spinner'
 import StatCard from '../components/common/StatCard'
@@ -13,7 +14,11 @@ function UserDashboardPage() {
     const fetchData = async () => {
       try {
         const { data } = await getMyRequestsApi()
-        setRequests(data)
+        const normalizedRequests = Array.isArray(data) ? data : data?.requests || []
+        setRequests(normalizedRequests)
+      } catch (error) {
+        toast.error(error?.message || 'Failed to load dashboard data')
+        setRequests([])
       } finally {
         setLoading(false)
       }
