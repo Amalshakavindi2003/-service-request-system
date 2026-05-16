@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import toast from 'react-hot-toast'
 import { getMyRequestsApi } from '../api/requestApi'
 import Spinner from '../components/common/Spinner'
 import StatusBadge from '../components/common/StatusBadge'
@@ -13,7 +14,11 @@ function RequestHistoryPage() {
     const fetchRequests = async () => {
       try {
         const { data } = await getMyRequestsApi()
-        setRequests(data)
+        const normalizedRequests = Array.isArray(data) ? data : data?.requests || []
+        setRequests(normalizedRequests)
+      } catch (error) {
+        toast.error(error?.message || 'Failed to load request history')
+        setRequests([])
       } finally {
         setLoading(false)
       }
@@ -25,11 +30,11 @@ function RequestHistoryPage() {
   const filtered = useMemo(() => {
     return requests.filter((item) => {
       const keyword = search.toLowerCase()
-      return (
-        item.title.toLowerCase().includes(keyword) ||
-        item.category.toLowerCase().includes(keyword) ||
-        item.status.toLowerCase().includes(keyword)
-      )
+      const title = (item?.title || '').toLowerCase()
+      const category = (item?.category || '').toLowerCase()
+      const status = (item?.status || '').toLowerCase()
+
+      return title.includes(keyword) || category.includes(keyword) || status.includes(keyword)
     })
   }, [requests, search])
 
