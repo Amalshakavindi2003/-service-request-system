@@ -3,6 +3,7 @@ const { body } = require('express-validator');
 const {
   createServiceRequest,
   getUserRequests,
+  getServiceRequestById,
   getAllServiceRequests,
   updateStatus,
   deleteRequest,
@@ -31,6 +32,9 @@ router.post(
 
 router.get('/my-requests', getUserRequests);
 router.get('/all', getAllServiceRequests);
+router.get('/admin/analytics', getSystemAnalytics);
+router.get('/:requestId', getServiceRequestById);
+
 router.patch('/:requestId/status', updateStatus);
 router.delete('/:requestId', deleteRequest);
 
@@ -42,6 +46,5 @@ router.post(
 );
 
 router.get('/:requestId/comments', getRequestComments);
-router.get('/admin/analytics', getSystemAnalytics);
 
 module.exports = router;
