@@ -7,7 +7,6 @@ import RequestHistoryPage from './pages/RequestHistoryPage'
 import ProfilePage from './pages/ProfilePage'
 import RequestDetailPage from './pages/RequestDetailPage'
 import AdminDashboard from './pages/AdminDashboard'
-import AdminRequests from './pages/AdminRequests'
 import AnalyticsPage from './pages/AnalyticsPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import ProtectedRouteAdmin from './components/ProtectedRouteAdmin'
@@ -28,7 +27,7 @@ function App() {
 
       <Route element={<ProtectedRouteAdmin />}>
         <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/admin/requests" element={<AdminRequests />} />
+        <Route path="/admin/requests" element={<AdminDashboard />} />
         <Route path="/analytics" element={<AnalyticsPage />} />
       </Route>
 
