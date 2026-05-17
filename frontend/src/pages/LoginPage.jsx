@@ -9,28 +9,17 @@ function LoginPage() {
   const { login } = useAuth()
   const [form, setForm] = useState({ email: '', password: '' })
   const [loading, setLoading] = useState(false)
-
   const from = location.state?.from?.pathname
 
-  const fillUserDemo = () => {
-    setForm({ email: 'john@company.com', password: 'Password@123' })
-  }
-
-  const fillAdminDemo = () => {
-    setForm({ email: 'admin@company.com', password: 'Password@123' })
-  }
+  const fillUserDemo = () => setForm({ email: 'john@company.com', password: 'Password@123' })
+  const fillAdminDemo = () => setForm({ email: 'admin@company.com', password: 'Password@123' })
 
   const handleSubmit = async (event) => {
     event.preventDefault()
     setLoading(true)
-
     try {
       const user = await login(form)
-      if (from) {
-        navigate(from, { replace: true })
-      } else {
-        navigate(user.role === 'admin' || user.role === 'staff' ? '/admin' : '/dashboard', { replace: true })
-      }
+      navigate(from || (user.role === 'admin' || user.role === 'staff' ? '/admin' : '/dashboard'), { replace: true })
     } catch (error) {
       toast.error(error.message)
     } finally {
@@ -45,12 +34,12 @@ function LoginPage() {
         <p className="mt-1 text-sm text-slate-300">Access your dashboard to manage requests.</p>
 
         <div className="mt-4 rounded-xl border border-cyan-400/30 bg-cyan-400/10 p-3 text-sm text-cyan-100">
-          <strong>Demo credentials</strong>
-          <ul className="mt-1 list-disc list-inside">
-            <li><strong>User</strong>: john@company.com — <span className="font-mono">Password@123</span></li>
-            <li><strong>Admin</strong>: admin@company.com — <span className="font-mono">Password@123</span></li>
+          <strong>Demo access</strong>
+          <ul className="mt-2 space-y-1 text-sm">
+            <li><span className="font-semibold">User:</span> john@company.com / <span className="font-mono">Password@123</span></li>
+            <li><span className="font-semibold">Admin:</span> admin@company.com / <span className="font-mono">Password@123</span></li>
           </ul>
-          <p className="mt-2 text-xs text-slate-200/80">These demo accounts are for evaluation only. Do not use real credentials in production.</p>
+          <p className="mt-2 text-xs text-slate-200/80">Use these only for demo/testing.</p>
         </div>
 
         <div className="mt-4 grid gap-2 sm:grid-cols-2">
@@ -59,32 +48,14 @@ function LoginPage() {
         </div>
 
         <label className="mt-6 block text-sm text-slate-300">Email</label>
-        <input
-          type="email"
-          required
-          value={form.email}
-          onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))}
-          className="input"
-          placeholder="you@company.com"
-        />
+        <input type="email" required value={form.email} onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))} className="input" placeholder="you@company.com" />
 
         <label className="mt-4 block text-sm text-slate-300">Password</label>
-        <input
-          type="password"
-          required
-          value={form.password}
-          onChange={(e) => setForm((prev) => ({ ...prev, password: e.target.value }))}
-          className="input"
-          placeholder="Enter password"
-        />
+        <input type="password" required value={form.password} onChange={(e) => setForm((prev) => ({ ...prev, password: e.target.value }))} className="input" placeholder="Enter password" />
 
-        <button type="submit" disabled={loading} className="btn-primary mt-6 w-full disabled:opacity-70">
-          {loading ? 'Signing in...' : 'Login'}
-        </button>
+        <button type="submit" disabled={loading} className="btn-primary mt-6 w-full disabled:opacity-70">{loading ? 'Signing in...' : 'Login'}</button>
 
-        <p className="mt-4 text-sm text-slate-300">
-          New here? <Link to="/register" className="text-cyan-300 hover:text-cyan-200">Create account</Link>
-        </p>
+        <p className="mt-4 text-sm text-slate-300">New here? <Link to="/register" className="text-cyan-300 hover:text-cyan-200">Create account</Link></p>
       </form>
     </div>
   )

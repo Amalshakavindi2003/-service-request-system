@@ -10,6 +10,8 @@ const {
   addCommentToRequest,
   getRequestComments,
   getSystemAnalytics,
+  exportRequestsCsv,
+  getAuditLogs,
 } = require('../controllers/requestController');
 const { validateRequest } = require('../middleware/validateRequest');
 const { authenticateToken } = require('../middleware/authMiddleware');
@@ -32,7 +34,9 @@ router.post(
 
 router.get('/my-requests', getUserRequests);
 router.get('/all', getAllServiceRequests);
+router.get('/export', exportRequestsCsv);
 router.get('/admin/analytics', getSystemAnalytics);
+router.get('/admin/audit', getAuditLogs);
 router.get('/:requestId', getServiceRequestById);
 
 router.patch('/:requestId/status', updateStatus);
