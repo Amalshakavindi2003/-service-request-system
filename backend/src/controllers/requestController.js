@@ -8,6 +8,8 @@ const {
   addComment,
   getCommentsByRequestId,
   getAnalytics,
+  addAudit,
+  getAudits,
 } = require('../models/requestModel');
 const { isDemoMode } = require('../config/runtime');
 
@@ -18,7 +20,12 @@ const createServiceRequest = async (req, res, next) => {
     const { title, description, category, priority } = req.body;
     const userId = req.user?.id;
     if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+
     const request = await createRequest({ userId, title, description, category, priority });
+    try {
+      await addAudit({ userId, action: 'create_request', requestId: request.id, metadata: { title } });
+    } catch (auditError) {}
+
     return res.status(201).json({ message: 'Request created successfully', request, mode: isDemoMode() ? 'demo' : 'live' });
   } catch (error) { return next(error); }
 };
@@ -44,10 +51,7 @@ const getServiceRequestById = async (req, res, next) => {
 
     const isPrivileged = role === 'admin' || role === 'staff';
     const isOwner = Number(request.user_id) === Number(currentUserId);
-
-    if (!isPrivileged && !isOwner) {
-      return res.status(403).json({ message: 'Forbidden' });
-    }
+    if (!isPrivileged && !isOwner) return res.status(403).json({ message: 'Forbidden' });
 
     return res.status(200).json({ request });
   } catch (error) { return next(error); }
@@ -77,6 +81,11 @@ const updateStatus = async (req, res, next) => {
     const normalizedAssignee = typeof assignedTo === 'string' ? assignedTo.trim() : assignedTo;
     const request = await updateRequestStatus({ requestId, status, assignedTo: normalizedAssignee });
     if (!request) return res.status(404).json({ message: 'Request not found' });
+
+    try {
+      await addAudit({ userId: req.user?.id, action: 'update_status', requestId, metadata: { status, assignedTo: normalizedAssignee } });
+    } catch (auditError) {}
+
     return res.status(200).json({ message: 'Request updated', request });
   } catch (error) { return next(error); }
 };
@@ -86,8 +95,14 @@ const deleteRequest = async (req, res, next) => {
     const { requestId } = req.params;
     const role = req.user?.role;
     if (role !== 'admin' && role !== 'staff') return res.status(403).json({ message: 'Forbidden' });
+
     const deleted = await deleteRequestById(requestId);
     if (!deleted) return res.status(404).json({ message: 'Request not found' });
+
+    try {
+      await addAudit({ userId: req.user?.id, action: 'delete_request', requestId });
+    } catch (auditError) {}
+
     return res.status(200).json({ message: 'Request deleted' });
   } catch (error) { return next(error); }
 };
@@ -120,6 +135,46 @@ const getSystemAnalytics = async (req, res, next) => {
   } catch (error) { return next(error); }
 };
 
+const exportRequestsCsv = async (req, res, next) => {
+  try {
+    const { search = '', status = '', category = '', priority = '' } = req.query;
+    const role = req.user?.role;
+    if (role !== 'admin' && role !== 'staff') return res.status(403).json({ message: 'Forbidden' });
+
+    const requests = await getAllRequests({ search, status, category, priority });
+    const header = ['ID', 'Title', 'Requester', 'Category', 'Priority', 'Status', 'AssignedTo', 'CreatedAt', 'UpdatedAt'];
+    const rows = requests.map((r) => [
+      r.id,
+      r.title,
+      r.full_name || '',
+      r.category || '',
+      r.priority || '',
+      r.status || '',
+      r.assigned_to || '',
+      r.created_at || '',
+      r.updated_at || '',
+    ]);
+
+    const lines = [header.join(',')];
+    rows.forEach((row) => {
+      lines.push(row.map((value) => JSON.stringify(String(value))).join(','));
+    });
+
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', 'attachment; filename="requests_export.csv"');
+    return res.status(200).send(lines.join('\n'));
+  } catch (error) { return next(error); }
+};
+
+const getAuditLogs = async (req, res, next) => {
+  try {
+    const role = req.user?.role;
+    if (role !== 'admin' && role !== 'staff') return res.status(403).json({ message: 'Forbidden' });
+    const audits = await getAudits();
+    return res.status(200).json({ audits });
+  } catch (error) { return next(error); }
+};
+
 module.exports = {
   createServiceRequest,
   getUserRequests,
@@ -130,4 +185,6 @@ module.exports = {
   addCommentToRequest,
   getRequestComments,
   getSystemAnalytics,
+  exportRequestsCsv,
+  getAuditLogs,
 };

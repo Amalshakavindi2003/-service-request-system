@@ -8,6 +8,7 @@ import ProfilePage from './pages/ProfilePage'
 import RequestDetailPage from './pages/RequestDetailPage'
 import AdminDashboard from './pages/AdminDashboard'
 import AdminRequests from './pages/AdminRequests'
+import AdminAudit from './pages/AdminAudit'
 import AnalyticsPage from './pages/AnalyticsPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import ProtectedRouteAdmin from './components/ProtectedRouteAdmin'
@@ -29,6 +30,7 @@ function App() {
       <Route element={<ProtectedRouteAdmin />}>
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin/requests" element={<AdminRequests />} />
+        <Route path="/admin/audit" element={<AdminAudit />} />
         <Route path="/analytics" element={<AnalyticsPage />} />
       </Route>
 

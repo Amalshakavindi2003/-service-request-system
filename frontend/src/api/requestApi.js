@@ -9,3 +9,5 @@ export const deleteRequestApi = (requestId) => axiosClient.delete(`/requests/${r
 export const addCommentApi = (requestId, payload) => axiosClient.post(`/requests/${requestId}/comments`, payload)
 export const getCommentsApi = (requestId) => axiosClient.get(`/requests/${requestId}/comments`)
 export const getAnalyticsApi = () => axiosClient.get('/requests/admin/analytics')
+export const exportRequestsApi = (filters) => axiosClient.get('/requests/export', { params: filters, responseType: 'blob' })
+export const getAuditsApi = () => axiosClient.get('/requests/admin/audit')
