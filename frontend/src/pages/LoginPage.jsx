@@ -7,7 +7,7 @@ function LoginPage() {
   const navigate = useNavigate()
   const location = useLocation()
   const { login } = useAuth()
-  const [form, setForm] = useState({ email: 'john@company.com', password: 'Password@123' })
+  const [form, setForm] = useState({ email: '', password: '' })
   const [loading, setLoading] = useState(false)
 
   const from = location.state?.from?.pathname
@@ -45,9 +45,12 @@ function LoginPage() {
         <p className="mt-1 text-sm text-slate-300">Access your dashboard to manage requests.</p>
 
         <div className="mt-4 rounded-xl border border-cyan-400/30 bg-cyan-400/10 p-3 text-sm text-cyan-100">
-          Demo credentials:
-          <div className="mt-1">User: john@company.com / Password@123</div>
-          <div>Admin: admin@company.com / Password@123</div>
+          <strong>Demo credentials</strong>
+          <ul className="mt-1 list-disc list-inside">
+            <li><strong>User</strong>: john@company.com — <span className="font-mono">Password@123</span></li>
+            <li><strong>Admin</strong>: admin@company.com — <span className="font-mono">Password@123</span></li>
+          </ul>
+          <p className="mt-2 text-xs text-slate-200/80">These demo accounts are for evaluation only. Do not use real credentials in production.</p>
         </div>
 
         <div className="mt-4 grid gap-2 sm:grid-cols-2">
