@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { useAuth } from '../context/AuthContext'
@@ -28,18 +28,23 @@ function LoginPage() {
   }
 
   return (
-    <div className="grid min-h-screen place-items-center p-6 bg-gradient-to-b from-[#061226] to-[#041022]">
-      <form onSubmit={handleSubmit} className="card w-full max-w-lg p-0 overflow-hidden">
-        <div className="p-6 bg-gradient-to-r from-primary-700 to-accent-500">
-          <h1 className="text-3xl font-extrabold text-white">Service Desk</h1>
-          <p className="text-sm text-primary-50/90 mt-1">Sign in to manage requests and tickets</p>
+    <div className="auth-wrap">
+      <form onSubmit={handleSubmit} className="card w-full max-w-md p-0">
+        <div className="auth-card-header flex items-center gap-4 p-4">
+          <div style={{width:56, height:56, display:'grid', placeItems:'center', borderRadius:10, background:'rgba(255,255,255,0.04)'}}>
+            <span style={{fontSize:22}}>🛠️</span>
+          </div>
+          <div>
+            <h1 className="text-2xl font-extrabold text-white">Service Desk</h1>
+            <p className="text-sm text-primary-50/90 mt-1">Sign in to manage requests</p>
+          </div>
         </div>
 
-        <div className="p-6 bg-surface">
-          <h2 className="text-2xl font-bold text-white">Welcome back</h2>
+        <div className="auth-card-body p-6">
+          <h2 className="text-lg font-bold text-white">Welcome back</h2>
           <p className="mt-1 text-sm text-muted">Access your dashboard to manage requests.</p>
 
-          <div className="mt-5 rounded-lg border border-primary-600/20 bg-gradient-to-r from-primary-900/10 to-accent-900/6 p-3 text-sm text-primary-50">
+          <div className="demo-box mt-4">
             <strong>Demo access</strong>
             <ul className="mt-2 space-y-1 text-sm">
               <li><span className="font-semibold">User:</span> john@company.com / <span className="font-mono">Password@123</span></li>
@@ -48,9 +53,9 @@ function LoginPage() {
             <p className="mt-2 text-xs text-muted">Use these only for demo/testing.</p>
           </div>
 
-          <div className="mt-4 grid gap-2 sm:grid-cols-2">
-            <button type="button" onClick={fillUserDemo} className="btn-outline">👤 Use User Demo</button>
-            <button type="button" onClick={fillAdminDemo} className="btn-outline">🛠️ Use Admin Demo</button>
+          <div className="demo-actions mt-4">
+            <button type="button" onClick={fillUserDemo} className="btn-outline">👤 User demo</button>
+            <button type="button" onClick={fillAdminDemo} className="btn-outline">🛠️ Admin demo</button>
           </div>
 
           <div className="mt-6">
