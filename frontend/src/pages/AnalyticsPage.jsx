@@ -1,12 +1,14 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
+import { BarChart3, LineChart, TriangleAlert } from 'lucide-react'
+import AdminLayout from '../components/layout/AdminLayout'
 import { useAuth } from '../context/AuthContext'
 import { getAnalyticsApi } from '../api/requestApi'
 
 function AnalyticsPage() {
   const navigate = useNavigate()
-  const { user, logout } = useAuth()
+  const { user } = useAuth()
   const [analytics, setAnalytics] = useState(null)
   const [loading, setLoading] = useState(true)
 
@@ -16,7 +18,8 @@ function AnalyticsPage() {
       return
     }
     loadAnalytics()
-  }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user])
 
   const loadAnalytics = async () => {
     try {
@@ -30,91 +33,92 @@ function AnalyticsPage() {
     }
   }
 
-  if (loading) return <div className="text-center py-20 text-slate-400">Loading analytics...</div>
+  if (loading) {
+    return (
+      <AdminLayout title="Analytics Dashboard" subtitle="Loading analytics insights...">
+        <div className="card py-16 text-center text-slate-400">Loading analytics...</div>
+      </AdminLayout>
+    )
+  }
 
   const stats = [
-    { label: 'Total Requests', value: analytics?.total || 0, color: 'bg-blue-600', icon: '📊' },
-    { label: 'Pending', value: analytics?.pending || 0, color: 'bg-yellow-600', icon: '⏳' },
-    { label: 'In Progress', value: analytics?.inProgress || 0, color: 'bg-cyan-600', icon: '⚙️' },
-    { label: 'Completed', value: analytics?.completed || 0, color: 'bg-green-600', icon: '✓' },
+    { label: 'Total Requests', value: analytics?.total || 0, accent: 'linear-gradient(135deg, rgba(98,125,255,0.96), rgba(18,191,232,0.82))', icon: BarChart3 },
+    { label: 'Pending', value: analytics?.pending || 0, accent: 'linear-gradient(135deg, rgba(255,203,107,0.96), rgba(255,149,69,0.82))', icon: TriangleAlert },
+    { label: 'In Progress', value: analytics?.inProgress || 0, accent: 'linear-gradient(135deg, rgba(69,215,255,0.96), rgba(70,94,240,0.82))', icon: LineChart },
+    { label: 'Completed', value: analytics?.completed || 0, accent: 'linear-gradient(135deg, rgba(87,212,157,0.96), rgba(28,176,129,0.82))', icon: BarChart3 },
   ]
 
   return (
-    <div className="grid min-h-screen grid-cols-[250px_1fr]">
-      <nav className="border-r border-slate-700 bg-slate-800 p-6">
-        <div className="mb-8 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 p-4">
-          <h2 className="text-xl font-bold text-white">Service Request System</h2>
-        </div>
-        <ul className="space-y-2">
-          <li><button onClick={() => navigate('/admin')} className="w-full text-left rounded px-3 py-2 hover:bg-slate-700 text-white">📊 Dashboard</button></li>
-          <li><button onClick={() => navigate('/analytics')} className="w-full text-left rounded px-3 py-2 bg-cyan-500 text-white">📈 Analytics</button></li>
-          <li><button onClick={() => navigate('/admin/requests')} className="w-full text-left rounded px-3 py-2 hover:bg-slate-700 text-white">🔍 Manage Requests</button></li>
-          <li><button onClick={() => { logout(); navigate('/login') }} className="w-full mt-8 rounded bg-red-600 px-3 py-2 hover:bg-red-700 text-white">🚪 Logout</button></li>
-        </ul>
-      </nav>
-
-      <main className="p-8">
-        <h1 className="text-3xl font-bold text-white mb-8">Analytics Dashboard</h1>
-
-        <div className="grid grid-cols-4 gap-4 mb-8">
-          {stats.map((stat, i) => (
-            <div key={i} className={`card p-6 ${stat.color}`}>
-              <div className="text-3xl mb-2">{stat.icon}</div>
-              <p className="text-slate-300 text-sm">{stat.label}</p>
-              <h3 className="text-4xl font-bold text-white">{stat.value}</h3>
-            </div>
-          ))}
-        </div>
-
-        <div className="grid grid-cols-2 gap-6">
-          <div className="card p-6">
-            <h2 className="text-xl font-bold text-white mb-4">By Category</h2>
-            <div className="space-y-2">
-              {Object.entries(analytics?.byCategory || {}).map(([category, count]) => (
-                <div key={category} className="flex justify-between items-center pb-2 border-b border-slate-600">
-                  <span className="text-slate-300">{category}</span>
-                  <div className="flex items-center gap-2">
-                    <div className="h-2 bg-cyan-500 rounded" style={{width: (count * 20) + 'px'}}></div>
-                    <span className="text-slate-400">{count}</span>
-                  </div>
+    <AdminLayout
+      title="Analytics Dashboard"
+      subtitle="A cleaner view of request volume, priorities, and resolution patterns."
+      actions={<button onClick={() => navigate('/admin/requests')} className="btn-outline"><BarChart3 size={16} /> Queue</button>}
+    >
+      <section className="page-grid page-grid--stats">
+        {stats.map((stat) => {
+          const Icon = stat.icon
+          return (
+            <article key={stat.label} className="stat-card" style={{ background: stat.accent }}>
+              <div style={{ position: 'relative', zIndex: 1, display: 'grid', gap: '0.5rem' }}>
+                <div className="flex items-center justify-between gap-3">
+                  <p style={{ margin: 0, fontSize: '0.85rem', fontWeight: 700, opacity: 0.95 }}>{stat.label}</p>
+                  <Icon size={18} />
                 </div>
-              ))}
-            </div>
-          </div>
+                <h2 style={{ margin: 0, fontSize: '2rem', lineHeight: 1 }}>{stat.value}</h2>
+              </div>
+            </article>
+          )
+        })}
+      </section>
 
-          <div className="card p-6">
-            <h2 className="text-xl font-bold text-white mb-4">By Priority</h2>
-            <div className="space-y-2">
-              {Object.entries(analytics?.byPriority || {}).map(([priority, count]) => {
-                const colors = { Low: 'bg-green-500', Medium: 'bg-yellow-500', High: 'bg-orange-500', Critical: 'bg-red-500' }
-                return (
-                  <div key={priority} className="flex justify-between items-center pb-2 border-b border-slate-600">
-                    <span className="text-slate-300">{priority}</span>
-                    <div className="flex items-center gap-2">
-                      <div className={`h-2 ${colors[priority] || 'bg-slate-500'} rounded`} style={{width: (count * 20) + 'px'}}></div>
-                      <span className="text-slate-400">{count}</span>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        </div>
-
-        <div className="card p-6 mt-6">
-          <h2 className="text-xl font-bold text-white mb-4">Request Distribution</h2>
-          <div className="flex justify-around items-end h-64">
-            {stats.map((stat, i) => (
-              <div key={i} className="flex flex-col items-center gap-2">
-                <div className={`${stat.color} rounded w-12 transition-all hover:scale-105`} style={{height: ((stat.value / (analytics?.total || 1)) * 200) + 'px'}}></div>
-                <span className="text-sm text-slate-300">{stat.label}</span>
-                <span className="text-lg font-bold text-white">{stat.value}</span>
+      <section className="page-grid page-grid--split">
+        <div className="card">
+          <h2 className="mb-4 text-xl font-semibold text-white">By Category</h2>
+          <div className="space-y-3">
+            {Object.entries(analytics?.byCategory || {}).map(([category, count]) => (
+              <div key={category} className="flex items-center justify-between gap-3 border-b border-white/8 pb-3">
+                <span className="text-slate-300">{category}</span>
+                <div className="flex items-center gap-2">
+                  <div className="h-2 rounded-full bg-cyan-400" style={{ width: `${Math.max(count * 20, 24)}px` }} />
+                  <span className="text-slate-400">{count}</span>
+                </div>
               </div>
             ))}
           </div>
         </div>
-      </main>
-    </div>
+
+        <div className="card">
+          <h2 className="mb-4 text-xl font-semibold text-white">By Priority</h2>
+          <div className="space-y-3">
+            {Object.entries(analytics?.byPriority || {}).map(([priority, count]) => {
+              const colors = { Low: 'bg-emerald-400', Medium: 'bg-amber-400', High: 'bg-orange-400', Critical: 'bg-rose-500' }
+              return (
+                <div key={priority} className="flex items-center justify-between gap-3 border-b border-white/8 pb-3">
+                  <span className="text-slate-300">{priority}</span>
+                  <div className="flex items-center gap-2">
+                    <div className={`h-2 rounded-full ${colors[priority] || 'bg-slate-400'}`} style={{ width: `${Math.max(count * 20, 24)}px` }} />
+                    <span className="text-slate-400">{count}</span>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section className="card">
+        <h2 className="mb-4 text-xl font-semibold text-white">Request Distribution</h2>
+        <div className="flex min-h-[18rem] items-end justify-around gap-4">
+          {stats.map((stat) => (
+            <div key={stat.label} className="flex flex-col items-center gap-2">
+              <div className="w-12 rounded-2xl bg-gradient-to-t from-white/10 to-white/0 transition-transform hover:scale-105" style={{ height: `${((stat.value / (analytics?.total || 1)) * 200) + 48}px`, background: stat.accent }} />
+              <span className="text-sm text-slate-300">{stat.label}</span>
+              <span className="text-lg font-bold text-white">{stat.value}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+    </AdminLayout>
   )
 }
 

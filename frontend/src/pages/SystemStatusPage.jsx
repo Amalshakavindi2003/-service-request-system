@@ -1,26 +1,32 @@
-import { useNavigate } from 'react-router-dom'
+import { ServerCog } from 'lucide-react'
+import AdminLayout from '../components/layout/AdminLayout'
+
 function SystemStatusPage() {
-  const navigate = useNavigate()
   const systems = [
-    { name: 'API Gateway', status: 'Healthy', note: 'No active incidents', color: 'text-emerald-400' },
-    { name: 'Database', status: 'Healthy', note: 'Latency < 10ms', color: 'text-emerald-400' },
-    { name: 'Mail Server', status: 'Degraded', note: 'Queue processing slowdown', color: 'text-amber-400' },
+    { name: 'API Gateway', status: 'Healthy', note: 'No active incidents', color: 'text-emerald-300' },
+    { name: 'Database', status: 'Healthy', note: 'Latency < 10ms', color: 'text-emerald-300' },
+    { name: 'Mail Server', status: 'Degraded', note: 'Queue processing slowdown', color: 'text-amber-300' },
   ]
+
   return (
-    <div className="min-h-screen rounded-3xl border border-slate-800 bg-slate-950/90 p-6">
-      <h1 className="text-3xl font-bold text-white">System Status</h1>
-      <div className="mt-6 grid gap-4">
-        {systems.map(s => (
-          <div key={s.name} className="flex items-center justify-between rounded-xl border border-slate-800 bg-slate-900/70 p-5">
+    <AdminLayout
+      title="System Status"
+      subtitle="A high-signal view of platform health and service quality."
+      actions={<div className="btn-outline"><ServerCog size={16} /> Live status</div>}
+    >
+      <section className="grid gap-4">
+        {systems.map((system) => (
+          <div key={system.name} className="card flex items-center justify-between gap-4 rounded-[1.5rem]">
             <div>
-              <p className="text-white font-medium">{s.name}</p>
-              <p className="text-sm text-slate-500">{s.note}</p>
+              <p className="text-lg font-semibold text-white">{system.name}</p>
+              <p className="text-sm text-slate-400">{system.note}</p>
             </div>
-            <span className={`text-sm font-bold uppercase ${s.color}`}>{s.status}</span>
+            <span className={`text-sm font-bold uppercase tracking-[0.16em] ${system.color}`}>{system.status}</span>
           </div>
         ))}
-      </div>
-    </div>
+      </section>
+    </AdminLayout>
   )
 }
+
 export default SystemStatusPage

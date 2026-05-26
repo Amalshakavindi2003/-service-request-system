@@ -1,27 +1,35 @@
+import { Gauge } from 'lucide-react'
+import AdminLayout from '../components/layout/AdminLayout'
+
 function SLAOverviewPage() {
   const pps = [
     { level: 'P1 - Critical', target: '1 Hour', current: '98.5%' },
     { level: 'P2 - High', target: '4 Hours', current: '99.2%' },
     { level: 'P3 - Medium', target: '1 Business Day', current: '97.8%' },
   ]
+
   return (
-    <div className="min-h-screen rounded-3xl border border-slate-800 bg-slate-950/90 p-6">
-      <h1 className="text-3xl font-bold text-white">SLA Overview</h1>
-      <div className="mt-8 grid gap-4">
-        {pps.map(p => (
-          <div key={p.level} className="flex items-center justify-between rounded-2xl border border-slate-800 bg-slate-900/70 p-6">
+    <AdminLayout
+      title="SLA Overview"
+      subtitle="A clean read on service-level targets and compliance health."
+      actions={<div className="btn-outline"><Gauge size={16} /> Compliance</div>}
+    >
+      <section className="grid gap-4">
+        {pps.map((item) => (
+          <div key={item.level} className="card flex items-center justify-between gap-4 rounded-[1.5rem]">
             <div>
-              <p className="text-lg font-semibold text-white">{p.level}</p>
-              <p className="text-sm text-slate-400">Response Target: {p.target}</p>
+              <p className="text-lg font-semibold text-white">{item.level}</p>
+              <p className="text-sm text-slate-400">Response Target: {item.target}</p>
             </div>
             <div className="text-right">
-              <p className="text-2xl font-bold text-cyan-400">{p.current}</p>
-              <p className="text-xs text-slate-500 uppercase">Compliance</p>
+              <p className="text-2xl font-bold text-cyan-300">{item.current}</p>
+              <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Compliance</p>
             </div>
           </div>
         ))}
-      </div>
-    </div>
+      </section>
+    </AdminLayout>
   )
 }
+
 export default SLAOverviewPage

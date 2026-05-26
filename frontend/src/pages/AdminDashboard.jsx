@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ActivitySquare, ArrowRight, ShieldCheck, SlidersHorizontal, Sparkles, Users } from 'lucide-react'
+import AdminLayout from '../components/layout/AdminLayout'
 import { useAuth } from '../context/AuthContext'
 import { getAnalyticsApi } from '../api/requestApi'
 
 function AdminDashboard() {
   const navigate = useNavigate()
-  const { user, logout } = useAuth()
+  const { user } = useAuth()
   const [analytics, setAnalytics] = useState(null)
 
   useEffect(() => {
@@ -36,76 +37,53 @@ function AdminDashboard() {
   ]
 
   return (
-    <div className="page-shell page-shell--split">
-      <nav className="sidebar">
-        <div className="brand">Operations</div>
-        <nav>
-          <a href="/admin" className="active">Overview</a>
-          <a href="/admin/requests">Manage Requests</a>
-          <a href="/analytics">Analytics</a>
-          <a href="/admin/audit">Audit Trail</a>
-          <a href="/admin/team">Team Directory</a>
-          <a href="/admin/sla">SLA Performance</a>
-          <a href="/admin/system-status">System Status</a>
-        </nav>
-        <div style={{ marginTop: '1rem' }}>
-          <button onClick={() => { logout(); navigate('/login') }} className="btn-outline logout">Logout</button>
-        </div>
-      </nav>
-
-      <main className="main">
-        <section className="hero-card">
-          <div className="hero-card__top">
-            <div>
-              <p className="hero-card__eyebrow">Administrator</p>
-              <h1 className="hero-card__title">System Overview</h1>
-              <p className="hero-card__copy">A cleaner command center for tickets, staff, and platform health.</p>
-            </div>
-            <div className="page-actions">
-              <button onClick={() => navigate('/admin/team')} className="btn-outline"><Users size={16} /> Team</button>
-              <button onClick={() => navigate('/admin/requests')} className="btn-primary">View Queue <ArrowRight size={16} /></button>
-            </div>
-          </div>
-        </section>
-
-        <section className="page-grid page-grid--stats" style={{ marginTop: '1.25rem', marginBottom: '1.25rem' }}>
-          {statCards.map((stat) => {
-            const Icon = stat.icon
-            return (
-              <article key={stat.label} className="stat-card" style={{ background: stat.tone }}>
-                <div style={{ position: 'relative', zIndex: 1, display: 'grid', gap: '0.75rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
-                    <p style={{ margin: 0, fontSize: '0.85rem', fontWeight: 700, opacity: 0.95 }}>{stat.label}</p>
-                    <Icon size={18} />
-                  </div>
-                  <h2 style={{ margin: 0, fontSize: '2.25rem', lineHeight: 1, letterSpacing: '-0.04em' }}>{stat.value}</h2>
+    <AdminLayout
+      title="System Overview"
+      subtitle="A calmer command center for tickets, staff, and platform health."
+      actions={(
+        <>
+          <button onClick={() => navigate('/admin/team')} className="btn-outline"><Users size={16} /> Team</button>
+          <button onClick={() => navigate('/admin/requests')} className="btn-primary">View Queue <ArrowRight size={16} /></button>
+        </>
+      )}
+    >
+      <section className="page-grid page-grid--stats">
+        {statCards.map((stat) => {
+          const Icon = stat.icon
+          return (
+            <article key={stat.label} className="stat-card" style={{ background: stat.tone }}>
+              <div style={{ position: 'relative', zIndex: 1, display: 'grid', gap: '0.75rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
+                  <p style={{ margin: 0, fontSize: '0.85rem', fontWeight: 700, opacity: 0.95 }}>{stat.label}</p>
+                  <Icon size={18} />
                 </div>
-              </article>
-            )
-          })}
-        </section>
+                <h2 style={{ margin: 0, fontSize: '2.25rem', lineHeight: 1, letterSpacing: '-0.04em' }}>{stat.value}</h2>
+              </div>
+            </article>
+          )
+        })}
+      </section>
 
-        <section className="page-grid page-grid--split">
-          <div className="card">
-            <h2 style={{ marginTop: 0, fontSize: '1.15rem' }}>Operations Shortcuts</h2>
-            <div className="page-grid" style={{ gridTemplateColumns: 'repeat(2, minmax(0, 1fr))' }}>
-              <button onClick={() => navigate('/admin/team')} className="btn-outline" style={{ justifyContent: 'flex-start' }}>Manage Staff</button>
-              <button onClick={() => navigate('/admin/sla')} className="btn-outline" style={{ justifyContent: 'flex-start' }}>SLA Policy</button>
-              <button onClick={() => navigate('/admin/system-status')} className="btn-outline" style={{ justifyContent: 'flex-start' }}>Infrastructure</button>
-              <button onClick={() => navigate('/analytics')} className="btn-outline" style={{ justifyContent: 'flex-start' }}>Export Data</button>
-            </div>
+      <section className="page-grid page-grid--split">
+        <div className="card">
+          <h2 style={{ marginTop: 0, fontSize: '1.15rem' }}>Operations Shortcuts</h2>
+          <div className="page-grid" style={{ gridTemplateColumns: 'repeat(2, minmax(0, 1fr))' }}>
+            <button onClick={() => navigate('/admin/team')} className="btn-outline" style={{ justifyContent: 'flex-start' }}>Manage Staff</button>
+            <button onClick={() => navigate('/admin/sla')} className="btn-outline" style={{ justifyContent: 'flex-start' }}>SLA Policy</button>
+            <button onClick={() => navigate('/admin/system-status')} className="btn-outline" style={{ justifyContent: 'flex-start' }}>Infrastructure</button>
+            <button onClick={() => navigate('/analytics')} className="btn-outline" style={{ justifyContent: 'flex-start' }}>Export Data</button>
           </div>
+        </div>
 
-          <div className="card" style={{ display: 'grid', alignContent: 'center', gap: '1rem' }}>
-            <div>
-              <p className="page-subtitle" style={{ marginTop: 0 }}>Need to review recent administrative actions?</p>
-              <h2 style={{ margin: '0.25rem 0 0', fontSize: '1.15rem' }}>Open the audit trail for a quick health check.</h2>
-            </div>
-            <button onClick={() => navigate('/admin/audit')} className="btn-secondary">Access Security Audit Trail</button>
+        <div className="card" style={{ display: 'grid', alignContent: 'center', gap: '1rem' }}>
+          <div>
+            <p className="page-subtitle" style={{ marginTop: 0 }}>Need to review recent administrative actions?</p>
+            <h2 style={{ margin: '0.25rem 0 0', fontSize: '1.15rem' }}>Open the audit trail for a quick health check.</h2>
           </div>
-        </section>
-      </main>
-    </div>
+          <button onClick={() => navigate('/admin/audit')} className="btn-secondary">Access Security Audit Trail</button>
+        </div>
+      </section>
+    </AdminLayout>
   )
 }
 
