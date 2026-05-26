@@ -1,6 +1,7 @@
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import {
   BarChart3,
+  ChevronRight,
   ClipboardList,
   Gauge,
   LayoutDashboard,
@@ -52,11 +53,11 @@ function AdminNavLink({ item }) {
         }`
       }
     >
-      <span className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/5 text-cyan-200 transition-transform duration-200 group-hover:scale-105 group-hover:bg-cyan-400/10 group-hover:text-cyan-100">
+      <span className="grid h-11 w-11 flex-none place-items-center rounded-xl border border-white/10 bg-white/5 text-cyan-200 transition-transform duration-200 group-hover:scale-105 group-hover:bg-cyan-400/10 group-hover:text-cyan-100">
         <Icon size={18} />
       </span>
-      <span className="flex-1">{item.label}</span>
-      <span className="text-slate-500 transition-transform duration-200 group-hover:translate-x-0.5">→</span>
+      <span className="flex-1 text-left">{item.label}</span>
+      <ChevronRight size={16} className="text-slate-500 transition-transform duration-200 group-hover:translate-x-0.5" />
     </NavLink>
   )
 }
@@ -74,7 +75,7 @@ function AdminLayout({ title, subtitle, actions, children }) {
         <div className="relative flex h-full flex-col gap-6">
           <Link
             to={currentPath.startsWith('/admin') ? '/admin' : '/analytics'}
-            className="rounded-[1.35rem] border border-white/10 bg-white/5 p-4 shadow-2xl shadow-slate-950/30 backdrop-blur-xl"
+            className="rounded-[1.5rem] border border-white/10 bg-white/5 p-4 shadow-2xl shadow-slate-950/30 backdrop-blur-xl"
           >
             <div className="flex items-start justify-between gap-3">
               <div>
@@ -86,9 +87,14 @@ function AdminLayout({ title, subtitle, actions, children }) {
                 <Sparkles size={22} />
               </div>
             </div>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[0.68rem] font-bold uppercase tracking-[0.16em] text-slate-200">Live</span>
+              <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[0.68rem] font-bold uppercase tracking-[0.16em] text-slate-200">Secure</span>
+              <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[0.68rem] font-bold uppercase tracking-[0.16em] text-slate-200">Fast Access</span>
+            </div>
           </Link>
 
-          <div className="rounded-[1.35rem] border border-white/8 bg-white/[0.03] p-4 backdrop-blur-md">
+          <div className="rounded-[1.5rem] border border-white/8 bg-white/[0.03] p-4 backdrop-blur-md">
             <div className="flex items-center gap-3">
               <div className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-cyan-400/20 to-indigo-500/20 text-white">
                 <ShieldCheck size={20} />
@@ -117,7 +123,7 @@ function AdminLayout({ title, subtitle, actions, children }) {
             ))}
           </nav>
 
-          <div className="mt-auto rounded-[1.35rem] border border-white/8 bg-gradient-to-br from-cyan-500/10 to-indigo-500/10 p-4">
+          <div className="mt-auto rounded-[1.5rem] border border-white/8 bg-gradient-to-br from-cyan-500/10 to-indigo-500/10 p-4">
             <p className="text-sm font-semibold text-white">Need a quick escape?</p>
             <p className="mt-1 text-sm leading-6 text-slate-300">Jump back to the main workflow or sign out cleanly.</p>
             <div className="mt-4 flex flex-col gap-2">
