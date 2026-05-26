@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
+import { LayoutGrid, ShieldCheck } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 
 function LoginPage() {
@@ -29,48 +30,51 @@ function LoginPage() {
 
   return (
     <div className="auth-wrap">
-      <form onSubmit={handleSubmit} className="card w-full max-w-md p-0">
-        <div className="auth-card-header flex items-center gap-4 p-4">
-          <div style={{width:56, height:56, display:'grid', placeItems:'center', borderRadius:10, background:'rgba(255,255,255,0.04)'}}>
-            <span style={{fontSize:22}}>🛠️</span>
-          </div>
-          <div>
-            <h1 className="text-2xl font-extrabold text-white">Service Desk</h1>
-            <p className="text-sm text-primary-50/90 mt-1">Sign in to manage requests</p>
+      <form onSubmit={handleSubmit} className="auth-card card p-0">
+        <div className="auth-card-header">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <div style={{ width: 56, height: 56, display: 'grid', placeItems: 'center', borderRadius: 18, background: 'rgba(255, 255, 255, 0.16)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.18)' }}>
+              <LayoutGrid size={26} />
+            </div>
+            <div>
+              <p className="hero-card__eyebrow" style={{ color: 'rgba(255,255,255,0.8)', marginBottom: '0.3rem' }}>Service Desk</p>
+              <h1 style={{ margin: 0, fontSize: '1.9rem', lineHeight: 1.05 }}>Sign in to manage requests</h1>
+            </div>
           </div>
         </div>
 
-        <div className="auth-card-body p-6">
-          <h2 className="text-lg font-bold text-white">Welcome back</h2>
-          <p className="mt-1 text-sm text-muted">Access your dashboard to manage requests.</p>
+        <div className="auth-card-body">
+          <h2 style={{ marginTop: 0, marginBottom: '0.35rem', fontSize: '1.15rem' }}>Welcome back</h2>
+          <p className="page-subtitle" style={{ marginTop: 0 }}>Use your workspace account or try the demo accounts below.</p>
 
-          <div className="demo-box mt-4">
-            <strong>Demo access</strong>
-            <ul className="mt-2 space-y-1 text-sm">
+          <div className="demo-box" style={{ marginTop: '1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.75rem', fontWeight: 700 }}>
+              <ShieldCheck size={16} /> Demo access
+            </div>
+            <ul style={{ margin: 0, paddingLeft: '1.1rem', display: 'grid', gap: '0.45rem' }}>
               <li><span className="font-semibold">User:</span> john@company.com / <span className="font-mono">Password@123</span></li>
               <li><span className="font-semibold">Admin:</span> admin@company.com / <span className="font-mono">Password@123</span></li>
             </ul>
-            <p className="mt-2 text-xs text-muted">Use these only for demo/testing.</p>
           </div>
 
-          <div className="demo-actions mt-4">
-            <button type="button" onClick={fillUserDemo} className="btn-outline">👤 User demo</button>
-            <button type="button" onClick={fillAdminDemo} className="btn-outline">🛠️ Admin demo</button>
+          <div className="demo-actions" style={{ marginTop: '1rem' }}>
+            <button type="button" onClick={fillUserDemo} className="btn-outline"><ShieldCheck size={16} /> User demo</button>
+            <button type="button" onClick={fillAdminDemo} className="btn-outline"><LayoutGrid size={16} /> Admin demo</button>
           </div>
 
-          <div className="mt-6">
+          <div style={{ marginTop: '1.25rem' }}>
             <label className="block text-sm text-muted">Email</label>
             <input type="email" required value={form.email} onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))} className="input mt-2" placeholder="you@company.com" />
           </div>
 
-          <div className="mt-4">
+          <div style={{ marginTop: '1rem' }}>
             <label className="block text-sm text-muted">Password</label>
             <input type="password" required value={form.password} onChange={(e) => setForm((prev) => ({ ...prev, password: e.target.value }))} className="input mt-2" placeholder="Enter password" />
           </div>
 
           <button type="submit" disabled={loading} className="btn-primary mt-6 w-full disabled:opacity-70">{loading ? 'Signing in...' : 'Login'}</button>
 
-          <p className="mt-4 text-sm text-muted">New here? <Link to="/register" className="text-accent-500 hover:underline">Create account</Link></p>
+          <p className="mt-4 text-sm text-muted">New here? <Link to="/register" className="text-[color:var(--accent-400)] hover:text-white">Create account</Link></p>
         </div>
       </form>
     </div>
